@@ -27,3 +27,4 @@ pnpm-debug.log*
 yarn.lock
 pnpm-lock.yaml
 package-lock.json
+sample_save.json
