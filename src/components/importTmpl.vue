@@ -81,20 +81,8 @@ const getTempList = () => {
   Spin.show({
     render: (h) => h('div', t('alert.loading_data')),
   });
-  //const getTemp = axios.get(`${repoSrc}template/index.json`);
-
   state.list = [{}];
   Spin.hide();
-  // getTemp
-  //   .then((res) => {
-  //     state.list = res.data.data.map((item) => {
-  //       item.tempUrl = repoSrc + item.tempUrl;
-  //       item.src = repoSrc + item.src;
-  //       return item;
-  //     });
-  //     Spin.hide();
-  //   })
-  //   .catch(Spin.hide);
 };
 
 // 获取模板数据

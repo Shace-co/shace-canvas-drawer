@@ -1,11 +1,3 @@
-<!--
- * @Author: 秦少卫
- * @Date: 2022-09-03 19:16:55
- * @LastEditors: June
- * @LastEditTime: 2023-05-20 22:54:13
- * @Description: 回退重做
--->
-
 <template>
   <div style="display: inline-block">
     <!-- 后退 -->

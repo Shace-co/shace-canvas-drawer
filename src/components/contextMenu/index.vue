@@ -159,7 +159,7 @@ export default {
           this.hideMenu();
         }
       } catch (error) {
-        console.log(error);
+        throw new Error(error);
       }
     },
 

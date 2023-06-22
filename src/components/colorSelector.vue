@@ -10,10 +10,10 @@
     <!-- 颜色开关 -->
     <iSwitch v-model="isGradient" size="large" class="switch">
       <template #open>
-        <span>渐变</span>
+        <span>Gradient</span>
       </template>
       <template #close>
-        <span>纯色</span>
+        <span>Sloid</span>
       </template>
     </iSwitch>
 

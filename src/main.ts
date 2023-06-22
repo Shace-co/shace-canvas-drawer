@@ -6,6 +6,7 @@ import 'view-ui-plus/dist/styles/viewuiplus.css';
 import './styles/index.less';
 import VueLazyLoad from 'vue3-lazyload';
 
+// To import custom fonts
 import '@/assets/fonts/font.css';
 
 import i18n from './language/index';

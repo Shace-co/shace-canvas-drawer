@@ -232,7 +232,7 @@ export default {
       const activeObject = this.canvas.getActiveObject();
       if (activeObject) {
         const json = activeObject.toJSON(['id', 'gradientAngle', 'selectable', 'hasControls']);
-        console.log(json);
+        //console.log(json);
         const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
           JSON.stringify(json, null, '\t')
         )}`;
