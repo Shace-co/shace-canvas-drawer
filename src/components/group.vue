@@ -26,7 +26,7 @@
           p-id="17132"
         ></path>
       </svg>
-      组合
+      Group
     </Button>
     <!-- 拆分组合按钮，为单选且组元素时可用 -->
     <Button v-if="isGroup" :disabled="!isGroup" @click="unGroup" type="text">
@@ -45,7 +45,7 @@
           p-id="17282"
         ></path>
       </svg>
-      拆分组合
+      Ungroup
     </Button>
   </div>
 </template>
