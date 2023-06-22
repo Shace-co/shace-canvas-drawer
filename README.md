@@ -1,139 +1,99 @@
-[文档](https://nihaojob.gitbook.io/editor/) | [English](https://github.com/nihaojob/vue-fabric-editor/blob/main/README-en.md) | 中文 
+English| [中文](https://github.com/nihaojob/vue-fabric-editor/blob/main/README.md)
+
+Documents are translated using software,You are welcome to submit for inspection.
 
 # vue-fabric-editor
 
-基于 fabric.js 和 Vue 开发的图片编辑器，可自定义字体、素材、设计模板。
-- [预览](https://nihaojob.github.io/vue-fabric-editor/) 
-- [Gitee预览](https://nihaojob.gitee.io/vue-fabric-editor/#/)
+[Demo](https://nihaojob.github.io/vue-fabric-editor/) fabric.js and Vue based image editor, can customize fonts, materials, design templates.
 
-![image](https://user-images.githubusercontent.com/13534626/230828335-0adee0ae-b951-4171-b6ba-d2b9cd44dd6a.png)
+<p align="center"><img src="./src/assets/demo.png" /></p>
 
-## 已有功能
-[功能介绍文章](https://juejin.cn/post/7222141882515128375) 文字 + 动图。
-- 导入 JSON 文件
-- 保存为 PNG、SVG、JSON 文件
-- 插入 SVG、图片文件
-- 多元素水平、垂直对齐方式
-- 字体模板
-- 组合/拆分组合
-- 图层及顺序调整
-- 撤销/重做
-- 背景属性设置
-- 外观属性/字体属性/描边/阴影
-- 自定义字体
-- 自定义模板素材
-- 快捷键
-- 右键菜单
-- 辅助线
-- 标尺
-- 图片替换
-- 图片滤镜
-- 国际化
+## Existing function
 
-## 使用
+- Import JSON file
+- Save it as a PNG, SVG, or JSON file
+- Insert SVG, image files
+- Multi-element horizontal and vertical alignment
+- Combine/Split Combine
+- Layer and order adjustments
+- undo/redo
+- Background property setting
+- Appearance Properties/Font Properties/Stroke/Shadow
+- custom font
+- Custom template material
+- i18n
+- Auxiliary line
 
-### 启动项目
-请先安装node.js v16，然后执行以下命令：
+## Use
+
+### Startup
 
 ```
 yarn install
 yarn serve
 ```
 
-为非web前端开发人员准备了[部署教程](https://t.zsxq.com/0drqSuyjY)，快速解决你的部署需求。
+### Custom font
 
-### 自定义素材
-可自定义字体、设计模板、标题模板等，所有自定义素材在https://github.com/nihaojob/vue-fabric-editor-static 项目中保存。
+The font-related files are in `src/assets/fonts`, put the font files in the directory, and update the newly added font name to the `font.css` and `font.js` files.
 
-我们通过有偿的方式积累高质量的常见问题、最佳实践文档，欢迎加入星球：
+```js
+// font.js
+const cnList = [
+  {
+    name: '汉体',
+    fontFamily: '汉体',
+  },
+  {
+    name: '华康金刚黑',
+    fontFamily: '华康金刚黑',
+  },
+];
 
-<img src="https://user-images.githubusercontent.com/13534626/231202037-18fe913f-81ab-4cd6-aa87-ada471e27586.png" width="50%" >
+const enList = [];
+export default [...cnList, ...enList];
+```
 
+```css
+/* font.css */
+@font-face {
+  font-family: '汉体';
+  src: url('./cn/汉体.ttf');
+}
 
-## 贡献指南
-项目致力于打造一个开箱即用的web图片编辑器应用，同时沉淀一个介于web图片编辑器应用与fabric.js之间的封装层，期望封装层面向开发者设计，提供更简单的接口，让开发者可以轻松的实现图片应用开发。
+@font-face {
+  font-family: '华康金刚黑';
+  src: url('./cn/华康金刚黑.ttf');
+}
+```
 
-我们离目标还有很长的距离，如果你对这件事情感兴趣，真诚的邀请你加入，我们一起沉淀fabric.js的最佳实践，你会得到包括不限于以下列表的收获，你只要会简单的Git和Javascript语法就可以。
+### Custom template
 
-- 熟悉开源协作方式，成为项目贡献者。
-- Vue3 + TS实践，边学边开发。
-- fabric.js开发，边学边开发。
-- 入门单元测试，边学边开发。
-- 众多的fabric.js开发者交流。
-- 图形编辑器架构经验。
+The entry of the custom template is in the `src/components/importTmpl.vue` component, and the template image and JSON file can be placed in the `public/template` file, and the data can be displayed in the component.
 
-目前有很多需要做的工作，比如英文文档的搭建、SDK拆分等，欢迎与我联系，我愿意与你进行任何问题的交流，微信：13146890191。期待你的 issue 和 PR 。
+## Contribution Guidelines
 
-这是我发表在掘金社区关于编辑器的技术笔记，会有更多的细节：
-1. [使用 fabric.js 快速开发一个图片编辑器](https://juejin.cn/post/7155040639497797645)，
-2. [fabric.js开发图片编辑器的细节实现](https://juejin.cn/post/7199849226745430076)
+This is a design editor project that I am using. There are many similar paid editors on the market. As a developer, I still hope to find an editor that can be easily extended and customized. If you also have needs, welcome to join us maintain.
 
-注：如果遇到技术问题，期望使用 issue 讨论，它更加开放与透明，足够多的信息会让解决问题变得更高效，参考[提问的智慧](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md#%E6%8F%90%E9%97%AE%E7%9A%84%E6%99%BA%E6%85%A7)。
+Development introduction：[使用 fabric.js 快速开发一个图片编辑器](https://juejin.cn/post/7155040639497797645)
 
+## plan
 
-<!-- <img src="https://user-images.githubusercontent.com/13534626/231202488-f35be6bc-617a-412e-831e-b3764466d833.jpeg" width="20%"> -->
+### Possible New Features
 
-
-## 规划
-
-### 可能新增功能
-
-第一阶段
-
-- [x] 缩放
-- [x] 三角形、箭头、线条
-- [x] 复制 粘贴 快捷键
-- [x] 拖动模式，放大缩小
-- [x] 画布大小保存
-- [x] 绘制线条
-- [ ] svgIcon 汇总
-- [x] 标题样式列表模板
-- [x] 预览
-
-第二阶段
-
-- [x] 图片替换
-- [x] 渐变配置
-- [ ] 平铺背景、等比例背景
-- [ ] 图片裁剪
-- [x] 滤镜
-- [x] 描边 strokeDashArray
-
-
-第三阶段
-
-- [ ] monorepo升级 进行中
-- [ ] 标尺插件
-- [ ] 截图插件
-- [ ] 滤镜插件
-- [ ] 画布插件
-- [ ] 其他工具函数
-- [ ] @fabricEditor SDK封装
-- [ ] 基于插件开发移动端
-- [ ] 基于插件开发其他图片应用
-- [ ] 文档建设(中英文)
-
-
-
-## 致谢
-
-- [color-gradient-picker-vue3](https://github.com/Qiu-Jun/color-gradient-picker-vue3) 一个 vue3 版本的渐变组件，作者[Qiu-Jun
-  ](https://github.com/Qiu-Jun)。
-- 标尺功能作者[刘明野](https://github.com/liumingye)。
-  
-## 贡献者
-<!-- readme: collaborators,contributors -start -->
-<table>
-<tr>
-    <td align="center">
-        <a href="https://github.com/mo9a7i">
-            <img src="https://avatars.githubusercontent.com/u/1753262?v=4" width="80;" alt="mo9a7i"/>
-            <br />
-            <sub><b>mo9a7i</b></sub>
-        </a>
-    </td></tr>
-</table>
-<!-- readme: collaborators,contributors -end -->
+- [ ] svgIcon summary
+- [ ] Heading Style List Template
+- [ ] gradient configuration
+- [x] copy paste shortcut
+- [ ] Drag mode, zoom in and zoom out
+- [ ] Canvas size saving
+- [ ] Replace pictures, load url pictures
+- [x] zoom
+- [x] triangles, arrows, lines
+- [ ] Tile background, Isometric background
+- [ ] preview
+- [ ] stroke strokeDashArray
+- [x] draw lines
 
 ## License
 
