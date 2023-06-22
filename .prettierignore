@@ -1,8 +1,7 @@
 .DS_Store
 node_modules
 /dist
-auto-imports.d.ts
-.eslintrc-auto-import.json
+
 
 # local env files
 .env.local
@@ -23,7 +22,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-.npmrc
 yarn.lock
-pnpm-lock.yaml
-package-lock.json
