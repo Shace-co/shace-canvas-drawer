@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { getImgStr, selectFiles } from '@/utils/utils';
+import { compressImage, getImgStr, selectFiles } from '@/utils/utils';
 import select from '@/mixins/select';
 import { v4 as uuid } from 'uuid';
 
@@ -62,9 +62,9 @@ export default {
     // 插入图片
     insertImg() {
       selectFiles({ accept: 'image/*', multiple: true }).then((fileList) => {
-        Array.from(fileList).forEach((item) => {
-          getImgStr(item).then((file) => {
-            this.insertImgFile(file);
+        Array.from(fileList).forEach((file) => {
+          compressImage(file, 0.5).then((compressedBase64) => {
+            this.insertImgFile(compressedBase64);
           });
         });
       });

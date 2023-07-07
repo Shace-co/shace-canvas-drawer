@@ -114,3 +114,25 @@ export const clipboardText = async (
     throw error;
   }
 };
+
+export async function compressImage(file: File, quality = 1) {
+  return new Promise((resolve) => {
+    // # Create an image element:
+    const img = new Image();
+    img.onload = () => {
+      // * Create a canvas element and set its dimensions to match the image
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      // * Draw the image to a canvas:
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0);
+      // * Convert to Base64:
+      const base64 = canvas.toDataURL('image/jpeg', quality);
+      // = Resolve with the data URL string:
+      resolve(base64);
+    };
+    // # Set the image source to the file's data URL:
+    img.src = URL.createObjectURL(file);
+  });
+}
