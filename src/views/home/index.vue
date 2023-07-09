@@ -169,7 +169,7 @@ export default {
       select: null,
       ruler: false,
       shaceLogo: shaceLogo,
-      bookable: true,
+      bookable: false,
     };
   },
   components: {
@@ -248,18 +248,7 @@ export default {
     },
     switchBookable() {
       const activeObject = this.canvas.getActiveObject();
-      if (activeObject) {
-        const id = activeObject.id;
-        const bookableListJson = localStorage.getItem('bookableList');
-        let bookableList = bookableListJson ? JSON.parse(bookableListJson) : [];
-        bookableList = bookableList.map((item) => {
-          if (item.id === id) {
-            item.bookable = !item.bookable;
-          }
-          return item;
-        });
-        localStorage.setItem('bookableList', JSON.stringify(bookableList));
-      }
+      activeObject?.set?.('bookable', !activeObject.bookable);
     },
   },
 };
