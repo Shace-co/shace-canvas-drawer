@@ -32,7 +32,7 @@ export default {
       zIndex: -100,
       menu: null,
       menuList: [
-        // 菜单
+        // 菜单 menu
         {
           type: 'copy',
           activeName: 'copy',
@@ -45,14 +45,14 @@ export default {
           text: this.$t('mouseMenu.group'),
           subText: 'Group',
         },
-        // 对齐
+        // 对齐 align
         {
           type: 'center',
           activeName: 'center',
           text: this.$t('mouseMenu.center'),
           subText: 'Center',
         },
-        // 排序
+        // 排序 sort
         {
           type: 'sort',
           activeName: '',
@@ -85,7 +85,7 @@ export default {
             },
           ],
         },
-        // 删除
+        // 删除 delete
         {
           type: 'delete',
           activeName: 'delete',
@@ -99,11 +99,11 @@ export default {
     menuItem,
   },
   computed: {
-    // 单选且等于组元素
+    // 单选且等于组元素 single select group element
     isGroup() {
       return this.mSelectMode === 'one' && this.mSelectOneType === 'group';
     },
-    // 是否为多选
+    // 是否为多选 is multiple
     isMultiple() {
       return this.mSelectMode === 'multiple';
     },
@@ -115,6 +115,7 @@ export default {
       this.init();
     });
     // 监听点击 隐藏(右键点击外部和fabric右键有冲突，因为点击非canvas只有点击左键才可以隐藏)
+    // Listen for clicks to hide (right-clicking outside and fabric right-clicking conflict, because clicking non-canvas can only hide when clicking the left mouse button)
     window.addEventListener('click', debounce(this.clickHide, 200));
   },
 
@@ -137,20 +138,20 @@ export default {
         const activeObject = canvas.getActiveObjects();
         if (!activeObject.length) return this.hideMenu();
         if (opt.button === 3 && opt.target && opt.target.id !== 'workspace') {
-          // 显示菜单，设置右键菜单位置
-          // 获取菜单组件的宽高
+          // 显示菜单，设置右键菜单位置 show menu, set right-click menu position
+          // 获取菜单组件的宽高 get the width and height of the menu component
           const menuWidth = this.menu.offsetWidth;
           const menuHeight = this.menu.offsetHeight;
-          // 当前鼠标位置
+          // 当前鼠标位置 current mouse position
           let pointX = opt.pointer.x;
           let pointY = opt.pointer.y;
 
-          // 计算菜单出现的位置
-          // 如果鼠标靠近画布右侧，菜单就出现在鼠标指针左侧
+          // 计算菜单出现的位置 calculate where the menu appears
+          // 如果鼠标靠近画布右侧，菜单就出现在鼠标指针左侧 if the mouse is close to the right side of the canvas, the menu appears to the left of the mouse pointer
           if (canvas.width - pointX <= menuWidth) {
             pointX -= menuWidth;
           }
-          // 如果鼠标靠近画布底部，菜单就出现在鼠标指针上方
+          // 如果鼠标靠近画布底部，菜单就出现在鼠标指针上方 if the mouse is close to the bottom of the canvas, the menu appears above the mouse pointer
           if (canvas.height - pointY <= menuHeight) {
             pointY -= menuHeight;
           }

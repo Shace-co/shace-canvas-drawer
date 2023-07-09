@@ -23,22 +23,22 @@ const { canvas } = useSelect();
 
 const switchMode = (val) => {
   if (val) {
-    canvas.editor.editorWorkspace.startDring();
+    canvas.editor.editorWorkspace.startDragging();
   } else {
-    canvas.editor.editorWorkspace.endDring();
+    canvas.editor.editorWorkspace.endDragging();
   }
 };
 const handleKeyDown = (e) => {
   if (status.value) return;
   if (e.code === 'Space') {
     status.value = true;
-    canvas.editor.editorWorkspace.startDring();
+    canvas.editor.editorWorkspace.startDragging();
   }
 };
 const handleKeyUp = (e) => {
   if (e.code === 'Space') {
     status.value = false;
-    canvas.editor.editorWorkspace.endDring();
+    canvas.editor.editorWorkspace.endDragging();
   }
 };
 

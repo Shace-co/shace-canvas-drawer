@@ -2,11 +2,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 /*
- * @Author: 秦少卫
+ * @Author: 秦少卫 (shao wei qin).
  * @Date: 2023-02-03 21:50:10
- * @LastEditors: 秦少卫
+ * @LastEditors: 秦少卫 (shao wei qin).
  * @LastEditTime: 2023-06-04 15:50:49
- * @Description: 工作区初始化
+ * @Description: 工作区初始化 workspace init
  */
 
 import { fabric } from 'fabric';
@@ -40,17 +40,17 @@ class EditorWorkspace {
     this._initBackground();
     this._initWorkspace();
     this._initResizeObserve();
-    this._initDring();
+    this._initDragging();
   }
 
-  // 初始化背景
+  // init background
   _initBackground() {
     this.canvas.backgroundImage = '';
     this.canvas.setWidth(this.workspaceEl.offsetWidth);
     this.canvas.setHeight(this.workspaceEl.offsetHeight);
   }
 
-  // 初始化画布
+  // init workspace (canvas)
   _initWorkspace() {
     const { width, height } = this.option;
     const workspace = new fabric.Rect({
@@ -70,8 +70,8 @@ class EditorWorkspace {
   }
 
   /**
-   * 设置画布中心到指定对象中心点上
-   * @param {Object} obj 指定的对象
+   * set canvas center to the center of the specified object
+   * @param {Object} obj the specified object
    */
   setCenterFromObject(obj: fabric.Rect) {
     const { canvas } = this;
@@ -84,7 +84,7 @@ class EditorWorkspace {
     canvas.renderAll();
   }
 
-  // 初始化监听器
+  // init resize observer
   _initResizeObserve() {
     const resizeObserver = new ResizeObserver(
       throttle(() => {
@@ -98,7 +98,7 @@ class EditorWorkspace {
     this._initBackground();
     this.option.width = width;
     this.option.height = height;
-    // 重新设置workspace
+    // reset workspace
     this.workspace = this.canvas
       .getObjects()
       .find((item) => item.id === 'workspace') as fabric.Rect;
@@ -119,7 +119,7 @@ class EditorWorkspace {
     if (!this.workspace) return;
     this.setCenterFromObject(this.workspace);
 
-    // 超出画布不展示
+    // do not show the part out of the canvas
     this.workspace.clone((cloned: fabric.Rect) => {
       this.canvas.clipPath = cloned;
       this.canvas.requestRenderAll();
@@ -130,14 +130,14 @@ class EditorWorkspace {
   _getScale() {
     const viewPortWidth = this.workspaceEl.offsetWidth;
     const viewPortHeight = this.workspaceEl.offsetHeight;
-    // 按照宽度
+    // by width or height
     if (viewPortWidth / viewPortHeight < this.option.width / this.option.height) {
       return viewPortWidth / this.option.width;
-    } // 按照宽度缩放
+    } // scale by width ratio
     return viewPortHeight / this.option.height;
   }
 
-  // 放大
+  // zoom in
   big() {
     let zoomRatio = this.canvas.getZoom();
     zoomRatio += 0.05;
@@ -145,7 +145,7 @@ class EditorWorkspace {
     this.canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoomRatio);
   }
 
-  // 缩小
+  // zoom out
   small() {
     let zoomRatio = this.canvas.getZoom();
     zoomRatio -= 0.05;
@@ -156,37 +156,37 @@ class EditorWorkspace {
     );
   }
 
-  // 自动缩放
+  // auto scale
   auto() {
     const scale = this._getScale();
     this.setZoomAuto(scale - 0.08);
   }
 
-  // 1:1 放大
+  // 1:1 zoom
   one() {
     this.setZoomAuto(0.8 - 0.08);
     this.canvas.requestRenderAll();
   }
 
-  // 开始拖拽
-  startDring() {
+  // start dragging
+  startDragging() {
     this.dragMode = true;
     this.canvas.defaultCursor = 'grab';
   }
-  endDring() {
+  endDragging() {
     this.dragMode = false;
     this.canvas.defaultCursor = 'default';
   }
 
-  // 拖拽模式
-  _initDring() {
+  // initaialize dragging
+  _initDragging() {
     const This = this;
     this.canvas.on('mouse:down', function (this: ExtCanvas, opt) {
       const evt = opt.e;
       if (evt.altKey || This.dragMode) {
         This.canvas.defaultCursor = 'grabbing';
         This.canvas.discardActiveObject();
-        This._setDring();
+        This._setDragging();
         this.selection = false;
         this.isDragging = true;
         this.lastPosX = evt.clientX;
@@ -237,7 +237,7 @@ class EditorWorkspace {
     });
   }
 
-  _setDring() {
+  _setDragging() {
     this.canvas.selection = false;
     this.canvas.defaultCursor = 'grab';
     this.canvas.getObjects().forEach((obj) => {

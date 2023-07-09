@@ -14,8 +14,8 @@ import vfe from 'vfe';
 import type { fabric } from 'fabric';
 
 const keyNames = {
-  lrdu: 'left,right,down,up', // 左右上下
-  backspace: 'backspace', // backspace键盘
+  lrdu: 'left,right,down,up', // 左右上下 键盘 (left, right, down, up)
+  backspace: 'backspace', // backspace键盘 (backspace)
   ctrlz: 'ctrl+z',
   ctrlc: 'ctrl+c',
   ctrlv: 'ctrl+v',
@@ -24,12 +24,12 @@ const keyNames = {
 function copyElement(editor: vfe.ICanvas, canvas: fabric.Canvas) {
   let copyEl: fabric.ActiveSelection | fabric.Object | null;
 
-  // 复制
+  // 复制 ctrl + c
   hotkeys(keyNames.ctrlc, () => {
     const activeObject = canvas.getActiveObject();
     copyEl = activeObject;
   });
-  // 粘贴
+  // 粘贴 ctrl + v
   hotkeys(keyNames.ctrlv, () => {
     if (copyEl) {
       editor.clone(copyEl);
@@ -38,7 +38,7 @@ function copyElement(editor: vfe.ICanvas, canvas: fabric.Canvas) {
 }
 
 function initHotkeys(canvas: fabric.Canvas, editor: vfe.ICanvas) {
-  // 删除快捷键
+  // 删除快捷键 backspace
   hotkeys(keyNames.backspace, () => {
     const activeObject = canvas.getActiveObjects();
     if (activeObject) {
@@ -48,7 +48,7 @@ function initHotkeys(canvas: fabric.Canvas, editor: vfe.ICanvas) {
     }
   });
 
-  // 移动快捷键
+  // 移动快捷键   left, right, down, up
   hotkeys(keyNames.lrdu, (event, handler) => {
     const activeObject = canvas.getActiveObject();
     if (!activeObject) return;
@@ -74,7 +74,7 @@ function initHotkeys(canvas: fabric.Canvas, editor: vfe.ICanvas) {
     canvas.renderAll();
   });
 
-  // 复制粘贴
+  // 复制粘贴 ctrl + c, ctrl + v
   copyElement(editor, canvas);
 }
 

@@ -15,16 +15,16 @@
       </a>
       <template #list>
         <DropdownMenu>
-          <!-- 图片 -->
+          <!-- 图片 image -->
           <DropdownItem name="insertImg">{{ $t('insertFile.insert_picture') }}</DropdownItem>
           <!-- SVG -->
           <DropdownItem name="insertSvg">{{ $t('insertFile.insert_SVG') }}</DropdownItem>
-          <!-- SVG 字符串 -->
+          <!-- SVG 字符串 string  -->
           <DropdownItem name="insertSvgStrModal">{{ $t('insertFile.insert_SVGStr') }}</DropdownItem>
         </DropdownMenu>
       </template>
     </Dropdown>
-    <!-- 插入字符串svg元素 -->
+    <!-- 插入字符串svg元素 insert string svg -->
     <Modal
       v-model="showModal"
       :title="$t('insertFile.modal_tittle')"
@@ -59,7 +59,7 @@ export default {
     insertTypeHand(type) {
       this[type]();
     },
-    // 插入图片
+    // 插入图片 insert image
     insertImg() {
       selectFiles({ accept: 'image/*', multiple: true }).then((fileList) => {
         Array.from(fileList).forEach((file) => {
@@ -69,7 +69,7 @@ export default {
         });
       });
     },
-    // 插入Svg
+    // 插入Svg insert svg
     insertSvg() {
       selectFiles({ accept: '.svg', multiple: true }).then((fileList) => {
         Array.from(fileList).forEach((item) => {
@@ -79,34 +79,34 @@ export default {
         });
       });
     },
-    // 插入SVG元素
+    // 插入SVG元素 insert svg element
     insertSvgStrModal() {
       this.svgStr = '';
       this.showModal = true;
     },
-    // 插入图片文件
+    // 插入图片文件 insert image file
     insertImgFile(file) {
       const imgEl = document.createElement('img');
       imgEl.src = file || this.imgFile;
-      // 插入页面
+      // 插入页面 insert page
       document.body.appendChild(imgEl);
       imgEl.onload = () => {
-        // 创建图片对象
+        // 创建图片对象 create image object
         const imgInstance = new this.fabric.Image(imgEl, {
           id: uuid(),
           name: '图片1',
           left: 100,
           top: 100,
         });
-        // 设置缩放
+        // 设置缩放 set scale
         this.canvas.c.add(imgInstance);
         this.canvas.c.setActiveObject(imgInstance);
         this.canvas.c.renderAll();
-        // 删除页面中的图片元素
+        // 删除页面中的图片元素 delete image element in page
         imgEl.remove();
       };
     },
-    // 插入文件元素
+    // 插入文件元素 insert file element
     insertSvgFile(svgFile) {
       const This = this;
       this.fabric.loadSVGFromURL(svgFile || this.svgFile, (objects, options) => {
@@ -118,7 +118,7 @@ export default {
         This.canvas.c.add(item).centerObject(item).renderAll();
       });
     },
-    // 插入字符串元素
+    // 插入字符串元素 insert string element
     insertSvgStr() {
       const This = this;
       this.fabric.loadSVGFromString(this.svgStr, (objects, options) => {

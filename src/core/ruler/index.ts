@@ -8,18 +8,18 @@ function initRuler(canvas: Canvas, options?: RulerOptions) {
     ...options,
   });
 
-  // 辅助线移动到画板外删除
+  // 辅助线移动到画板外删除 remove guideline when it is out of workspace
   let workspace: fabric.Object | undefined = undefined;
 
   /**
-   * 获取workspace
+   * 获取workspace (canvas)
    */
   const getWorkspace = () => {
     workspace = canvas.getObjects().find((item) => item.id === 'workspace');
   };
 
   /**
-   * 判断target是否在object矩形外
+   * 判断target是否在object矩形外 is target out of object rect
    * @param object
    * @param target
    * @returns

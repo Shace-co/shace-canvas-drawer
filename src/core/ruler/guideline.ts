@@ -15,28 +15,28 @@ export function setupGuideLine() {
     stroke: '#4bec13',
     originX: 'center',
     originY: 'center',
-    padding: 4, // 填充，让辅助线选择范围更大，方便选中
+    padding: 4, // 填充，让辅助线选择范围更大，方便选中 padding to make guideline selectable
     globalCompositeOperation: 'difference',
     axis: 'horizontal',
     // excludeFromExport: true,
 
     initialize(points, options) {
       const isHorizontal = options.axis === 'horizontal';
-      // 指针
+      // 指针 hover 时的样式  cursor style when hover
       this.hoverCursor = isHorizontal ? 'ns-resize' : 'ew-resize';
-      // 设置新的点
+      // 设置新的点 set new points
       const newPoints = isHorizontal
         ? [-999999, points, 999999, points]
         : [points, -999999, points, 999999];
-      // 锁定移动
+      // 锁定移动 lock movement
       options[isHorizontal ? 'lockMovementX' : 'lockMovementY'] = true;
-      // 调用父类初始化
+      // 调用父类初始化 call parent initialize
       this.callSuper('initialize', newPoints, options);
 
-      // 绑定事件
+      // 绑定事件 bind events
       this.on('mousedown:before', (e) => {
         if (this.activeOn === 'down') {
-          // 设置selectable:false后激活对象才能进行移动
+          // 设置selectable:false后激活对象才能进行移动 after set selectable:false, object can be moved
           this.canvas.setActiveObject(this, e.e);
         }
       });
@@ -54,7 +54,7 @@ export function setupGuideLine() {
       });
 
       this.on('mouseup', (e) => {
-        // 移动到标尺上，移除辅助线
+        // 移动到标尺上，移除辅助线 remove guideline when move to ruler
         if (this.canvas.ruler.options.enabled && this.isPointOnRuler(e.e)) {
           this.canvas.remove(this);
           return;

@@ -105,7 +105,7 @@ function initAligningGuidelines(canvas: fabric.Canvas) {
       // eslint-disable-next-line no-continue
       if (canvasObjects[i] === activeObject) continue;
 
-      // 排除辅助线
+      // 排除辅助线 exclude guide lines
       if (
         activeObject instanceof fabric.GuideLine &&
         canvasObjects[i] instanceof fabric.GuideLine
@@ -257,7 +257,7 @@ function initAligningGuidelines(canvas: fabric.Canvas) {
   });
 
   canvas.on('before:render', () => {
-    // fix 保存图片时报错
+    // fix 保存图片时报错 error when save image
     try {
       canvas.clearContext(canvas.contextTop);
     } catch (error) {

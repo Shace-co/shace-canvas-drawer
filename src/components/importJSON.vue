@@ -31,7 +31,7 @@ export default {
       });
     },
     insertSvgFile(jsonFile) {
-      // 加载字体后导入
+      // 加载字体后导入 import json after load font
       downFontByJSON(jsonFile).then(() => {
         this.canvas.c.loadFromJSON(jsonFile, () => {
           this.canvas.c.renderAll.bind(this.canvas.c);

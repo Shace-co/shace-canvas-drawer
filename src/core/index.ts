@@ -9,7 +9,7 @@ import EventEmitter from 'events';
 // import { fabric } from 'fabric';
 import { v4 as uuid } from 'uuid';
 
-// 对齐辅助线
+// 对齐辅助线 aligning guidelines
 import initAligningGuidelines from '@/core/initAligningGuidelines';
 import initControlsRotate from '@/core/initControlsRotate';
 import InitCenterAlign from '@/core/initCenterAlign';
@@ -42,19 +42,19 @@ class Editor extends EventEmitter {
     this.ruler = initRuler(canvas);
   }
 
-  // 多选对象复制
+  // 多选对象复制 clone active selection
   _copyActiveSelection(activeObject: fabric.Object) {
-    // 间距设置
+    // 间距设置 grid setting (px)
     const grid = 10;
     const canvas = this.canvas;
     activeObject?.clone((cloned: fabric.Object) => {
-      // 再次进行克隆，处理选择多个对象的情况
+      // 再次进行克隆，处理选择多个对象的情况 clone again to handle multiple object selection
       cloned.clone((clonedObj: fabric.ActiveSelection) => {
         canvas.discardActiveObject();
         if (clonedObj.left === undefined || clonedObj.top === undefined) return;
-        // 将克隆的画布重新赋值
+        // 将克隆的画布重新赋值 set cloned canvas
         clonedObj.canvas = canvas;
-        // 设置位置信息
+        // 设置位置信息 set position
         clonedObj.set({
           left: clonedObj.left + grid,
           top: clonedObj.top + grid,
@@ -65,7 +65,7 @@ class Editor extends EventEmitter {
           obj.id = uuid();
           canvas.add(obj);
         });
-        // 解决不可选择问题
+        // 解决不可选择问题 fix unselectable
         clonedObj.setCoords();
         canvas.setActiveObject(clonedObj);
         canvas.requestRenderAll();
@@ -73,15 +73,15 @@ class Editor extends EventEmitter {
     });
   }
 
-  // 单个对象复制
+  // 单个对象复制 clone single object
   _copyObject(activeObject: fabric.Object) {
-    // 间距设置
+    // 间距设置 grid setting (px)
     const grid = 10;
     const canvas = this.canvas;
     activeObject?.clone((cloned: fabric.Object) => {
       if (cloned.left === undefined || cloned.top === undefined) return;
       canvas.discardActiveObject();
-      // 设置位置信息
+      // 设置位置信息 set position
       cloned.set({
         left: cloned.left + grid,
         top: cloned.top + grid,
@@ -94,7 +94,7 @@ class Editor extends EventEmitter {
     });
   }
 
-  // 复制元素
+  // 复制元素 clone item
   clone(paramsActiveObeject: fabric.ActiveSelection | fabric.Object) {
     const activeObject = paramsActiveObeject || this.canvas.getActiveObject();
     if (!activeObject) return;
@@ -105,7 +105,7 @@ class Editor extends EventEmitter {
     }
   }
 
-  // 拆分组
+  // 拆分组 ungroup
   unGroup() {
     const activeObject = this.canvas.getActiveObject() as fabric.Group;
     if (!activeObject) return;
@@ -117,8 +117,8 @@ class Editor extends EventEmitter {
     this.canvas.discardActiveObject().renderAll();
   }
 
+  // 组合元素 group item
   group() {
-    // 组合元素
     const activeObj = this.canvas.getActiveObject() as fabric.ActiveSelection;
     if (!activeObj) return;
     const activegroup = activeObj.toGroup();
@@ -188,7 +188,7 @@ class Editor extends EventEmitter {
   }
 
   /**
-   * @description: 拖拽添加到画布
+   * @description: 拖拽添加到画布 drag add item to canvas
    * @param {Event} event
    * @param {Object} item
    */

@@ -19,7 +19,7 @@ class EditorGroupText {
     this.isDown = false;
   }
 
-  // 组内文本输入
+  // 组内文本输入 in-group text input
   _init() {
     this.canvas.on('mouse:down', (opt) => {
       this.isDown = true;
@@ -49,7 +49,7 @@ class EditorGroupText {
     });
   }
 
-  // 获取点击区域内的组内文字元素
+  // 获取点击区域内的组内文字元素 get text object in group by click area
   _getGroupTextObj(opt: fabric.IEvent<MouseEvent>) {
     const pointer = this.canvas.getPointer(opt.e, true);
     const clickObj = this.canvas._searchPossibleTargets(opt.target?._objects, pointer);
@@ -59,7 +59,7 @@ class EditorGroupText {
     return false;
   }
 
-  // 绑定编辑取消事件
+  // 绑定编辑取消事件 bind editing exited event to reset group position
   _bedingEditingEvent(textObject: fabric.IText, opt: fabric.IEvent<MouseEvent>) {
     if (!opt.target) return;
     const left = opt.target.left;
@@ -68,10 +68,10 @@ class EditorGroupText {
 
     const resetGroup = () => {
       const groupArr = this.canvas.getObjects().filter((item) => item.id && ids.includes(item.id));
-      // 删除元素
+      // 删除元素 remove objects
       groupArr.forEach((item) => this.canvas.remove(item));
 
-      // 生成新组
+      // 生成新组 create new group
       const group = new fabric.Group([...groupArr]);
       group.set('left', left);
       group.set('top', top);
@@ -80,11 +80,11 @@ class EditorGroupText {
       this.canvas.add(group);
       this.canvas.discardActiveObject().renderAll();
     };
-    // 绑定取消事件
+    // 绑定取消事件 bind exited event
     textObject.on('editing:exited', resetGroup);
   }
 
-  // 拆分组合并返回ID
+  // 拆分组合并返回ID split group and return ids of objects in group
   _unGroup() {
     const ids: string[] = [];
     const activeObj = this.canvas.getActiveObject() as fabric.Group;
