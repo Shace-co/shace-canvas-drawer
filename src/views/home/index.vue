@@ -87,6 +87,10 @@
             <replaceImg></replaceImg>
             <filters></filters>
             <div class="attr-item">
+              <Switch size="large" v-model="bookable" @on-change="switchBookable"></Switch>
+              <p style="margin: 0px 10px">Bookable</p>
+            </div>
+            <div class="attr-item">
               <lock></lock>
               <dele></dele>
               <clone></clone>
@@ -165,6 +169,7 @@ export default {
       select: null,
       ruler: false,
       shaceLogo: shaceLogo,
+      bookable: true,
     };
   },
   components: {
@@ -239,6 +244,21 @@ export default {
         downFile(fileStr, 'font.json');
         const dataUrl = activeObject.toDataURL();
         downFile(dataUrl, 'font.png');
+      }
+    },
+    switchBookable() {
+      const activeObject = this.canvas.getActiveObject();
+      if (activeObject) {
+        const id = activeObject.id;
+        const bookableListJson = localStorage.getItem('bookableList');
+        let bookableList = bookableListJson ? JSON.parse(bookableListJson) : [];
+        bookableList = bookableList.map((item) => {
+          if (item.id === id) {
+            item.bookable = !item.bookable;
+          }
+          return item;
+        });
+        localStorage.setItem('bookableList', JSON.stringify(bookableList));
       }
     },
   },
