@@ -21,7 +21,8 @@ const config = ({ mode }) => {
   const envPrefix = 'APP_';
   const { APP_TITLE = '' } = loadEnv(mode, process.cwd(), envPrefix);
   return {
-    base: isProd ? '/shace-canvas-drawer/' : '/',
+    // base: isProd ? '/shace-canvas-drawer/' : '/',
+    base: './',
     plugins: [
       vue(),
       autoImports({
