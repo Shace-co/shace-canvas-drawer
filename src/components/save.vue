@@ -53,6 +53,7 @@ const cbMap = {
       JSON.stringify(dataUrl, null, '\t')
     )}`;
     downFile(fileStr, 'json');
+    onCallback();
   },
 
   saveSvg() {
@@ -70,6 +71,7 @@ const cbMap = {
     });
     const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
     downFile(fileStr, 'svg');
+    onCallback();
   },
 
   saveImg() {
@@ -89,6 +91,7 @@ const cbMap = {
     const dataUrl = canvas.c.toDataURL(option);
     downFile(dataUrl, 'png');
     canvas.editor.ruler.showGuideline();
+    onCallback();
   },
 };
 
@@ -118,6 +121,16 @@ const beforeClear = () => {
     onOk: () => clear(),
   });
 };
+
+function onCallback() {
+  if (typeof window !== 'undefined') {
+    const callbackUrl = window.localStorage.getItem('callback_url');
+    if ((callbackUrl ?? '').trim().length) {
+      window.localStorage.removeItem('callback_url');
+      window.location.href = callbackUrl;
+    }
+  }
+}
 
 function downFile(fileStr, fileType) {
   const anchorEl = document.createElement('a');

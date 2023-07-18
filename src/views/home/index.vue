@@ -87,6 +87,10 @@
             <replaceImg></replaceImg>
             <filters></filters>
             <div class="attr-item">
+              <Switch size="large" v-model="bookable" @on-change="switchBookable"></Switch>
+              <p style="margin: 0px 10px">Bookable</p>
+            </div>
+            <div class="attr-item">
               <lock></lock>
               <dele></dele>
               <clone></clone>
@@ -106,6 +110,8 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router';
+
 // 导入元素
 import importJSON from '@/components/importJSON.vue';
 import importFile from '@/components/importFile.vue';
@@ -165,6 +171,7 @@ export default {
       select: null,
       ruler: false,
       shaceLogo: shaceLogo,
+      bookable: false,
     };
   },
   components: {
@@ -225,6 +232,19 @@ export default {
 
     this.show = true;
     this.$Spin.hide();
+
+    try {
+      if (typeof window !== 'undefined') {
+        const route = useRoute();
+        if (route?.query?.callback_url) {
+          window.localStorage.setItem('callback_url', route.query.callback_url);
+        } else {
+          window.localStorage.removeItem('callback_url');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
     // 获取字体数据 新增字体样式使用
@@ -240,6 +260,10 @@ export default {
         const dataUrl = activeObject.toDataURL();
         downFile(dataUrl, 'font.png');
       }
+    },
+    switchBookable() {
+      const activeObject = this.canvas.getActiveObject();
+      activeObject?.set?.('bookable', !activeObject.bookable);
     },
   },
 };
