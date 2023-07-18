@@ -236,10 +236,10 @@ export default {
     try {
       if (typeof window !== 'undefined') {
         const route = useRoute();
-        if (route?.query?.callback_url) {
-          window.localStorage.setItem('callback_url', route.query.callback_url);
+        if (route?.query && Object.keys(route.query).length > 0) {
+          window.localStorage.setItem('query_params', JSON.stringify(route.query));
         } else {
-          window.localStorage.removeItem('callback_url');
+          window.localStorage.removeItem('query_params');
         }
       }
     } catch (error) {
