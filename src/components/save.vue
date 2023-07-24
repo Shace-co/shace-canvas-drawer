@@ -14,7 +14,10 @@
     <Button style="margin-left: 10px" type="text" @click="beforeClear">
       {{ $t('clear') }}
     </Button>
-    <Dropdown style="margin-left: 10px" @on-click="saveWith">
+    <Button type="primary" @click="saveJson">
+      {{ $t('keep') }}
+    </Button>
+    <!-- <Dropdown style="margin-left: 10px" @on-click="saveWith">
       <Button type="primary">
         {{ $t('keep') }}
         <Icon type="ios-arrow-down"></Icon>
@@ -27,7 +30,7 @@
           <DropdownItem name="saveJson" divided>{{ $t('save_as_json') }}</DropdownItem>
         </DropdownMenu>
       </template>
-    </Dropdown>
+    </Dropdown> -->
   </div>
 </template>
 
@@ -40,6 +43,8 @@ import { debounce } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const { canvas } = useSelect();
 const cbMap = {
   clipboard() {
@@ -47,57 +52,56 @@ const cbMap = {
     clipboardText(JSON.stringify(jsonStr, null, '\t'));
   },
 
-  saveJson() {
-    const dataUrl = canvas.editor.getJson();
-    const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(dataUrl, null, '\t')
-    )}`;
-    downFile(fileStr, 'json');
-    onCallback();
-  },
+  // async saveJson() {
+  //   const dataUrl = canvas.editor.getJson();
+  //   const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+  //     JSON.stringify(dataUrl, null, '\t')
+  //   )}`;
+  //   downFile(fileStr, 'json');
+  // },
 
   saveSvg() {
-    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    const { left, top, width, height } = workspace;
-    const dataUrl = canvas.c.toSVG({
-      width,
-      height,
-      viewBox: {
-        x: left,
-        y: top,
-        width,
-        height,
-      },
-    });
-    const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
-    downFile(fileStr, 'svg');
-    onCallback();
+    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    // const { left, top, width, height } = workspace;
+    // const dataUrl = canvas.c.toSVG({
+    //   width,
+    //   height,
+    //   viewBox: {
+    //     x: left,
+    //     y: top,
+    //     width,
+    //     height,
+    //   },
+    // });
+    // const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
+    // downFile(fileStr, 'svg');
+    // onCallback();
   },
 
   saveImg() {
-    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    canvas.editor.ruler.hideGuideline();
-    const { left, top, width, height } = workspace;
-    const option = {
-      name: 'New Image',
-      format: 'png',
-      quality: 1,
-      left,
-      top,
-      width,
-      height,
-    };
-    canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
-    const dataUrl = canvas.c.toDataURL(option);
-    downFile(dataUrl, 'png');
-    canvas.editor.ruler.showGuideline();
-    onCallback();
+    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    // canvas.editor.ruler.hideGuideline();
+    // const { left, top, width, height } = workspace;
+    // const option = {
+    //   name: 'New Image',
+    //   format: 'png',
+    //   quality: 1,
+    //   left,
+    //   top,
+    //   width,
+    //   height,
+    // };
+    // canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    // const dataUrl = canvas.c.toDataURL(option);
+    // downFile(dataUrl, 'png');
+    // canvas.editor.ruler.showGuideline();
+    // onCallback();
   },
 };
 
-const saveWith = debounce(function (type) {
-  cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
-}, 300);
+// const saveWith = debounce(function (type) {
+//   cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
+// }, 300);
 
 /**
  * @desc clear canvas 清空画布
@@ -112,6 +116,37 @@ const clear = () => {
   canvas.c.renderAll();
 };
 
+async function saveJson() {
+  const dataUrl = canvas.editor.getJson();
+  // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+  //   JSON.stringify(dataUrl, null, '\t')
+  // )}`;
+  // downFile(fileStr, 'json');
+  const params = typeof window !== 'undefined' ? window.localStorage.getItem('query_params') : null;
+  if (params) {
+    const { callbackUrl, floor_id } = JSON.parse(params);
+    if (!floor_id) {
+      return;
+    }
+    console.log({ apiUrl, params });
+    await fetch(
+      // apiUrl
+      'http://localhost:8000/api' + '/rooms/draw/save',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          floor_id,
+          floor_drawing: dataUrl,
+        }),
+      }
+    );
+    onCallback(callbackUrl);
+  }
+}
+
 const beforeClear = () => {
   Modal.confirm({
     title: t('tip'),
@@ -122,30 +157,19 @@ const beforeClear = () => {
   });
 };
 
-function onCallback() {
-  if (typeof window !== 'undefined') {
-    const params = window.localStorage.getItem('query_params');
-    if (params) {
-      const { callbackUrl } = JSON.parse(params);
-      window.localStorage.removeItem('query_params');
-      window.location.href = callbackUrl;
-    }
+function onCallback(callbackUrl) {
+  if (callbackUrl) {
+    window.localStorage.removeItem('query_params');
+    window.location.href = callbackUrl;
   }
 }
 
 function downFile(fileStr, fileType) {
-  const anchorEl = document.createElement('a');
-  anchorEl.href = fileStr;
-  anchorEl.download = `${uuid()}.${fileType}`;
-  document.body.appendChild(anchorEl); // required for firefox
-  anchorEl.click();
-  anchorEl.remove();
+  // const anchorEl = document.createElement('a');
+  // anchorEl.href = fileStr;
+  // anchorEl.download = `${uuid()}.${fileType}`;
+  // document.body.appendChild(anchorEl); // required for firefox
+  // anchorEl.click();
+  // anchorEl.remove();
 }
 </script>
-
-<style scoped lang="less">
-.save-box {
-  display: inline-block;
-  padding-right: 10px;
-}
-</style>
