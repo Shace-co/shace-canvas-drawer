@@ -9,7 +9,7 @@
           </a>
         </span>
 
-        <import-JSON></import-JSON>
+        <import-floor></import-floor>
         <Divider type="vertical" />
         <import-file></import-file>
         <Divider type="vertical" />
@@ -113,7 +113,7 @@
 import { useRoute } from 'vue-router';
 
 // 导入元素
-import importJSON from '@/components/importJSON.vue';
+import importFloor from '@/components/importFloor.vue';
 import importFile from '@/components/importFile.vue';
 //import fontTmpl from '@/components/fontTmpl.vue';
 
@@ -188,7 +188,7 @@ export default {
     previewCurrent,
     save,
     lang,
-    importJSON,
+    importFloor,
     clone,
     flip,
     //importTmpl,
