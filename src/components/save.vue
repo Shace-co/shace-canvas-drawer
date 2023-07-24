@@ -124,9 +124,10 @@ const beforeClear = () => {
 
 function onCallback() {
   if (typeof window !== 'undefined') {
-    const callbackUrl = window.localStorage.getItem('callback_url');
-    if ((callbackUrl ?? '').trim().length) {
-      window.localStorage.removeItem('callback_url');
+    const params = window.localStorage.getItem('query_params');
+    if (params) {
+      const { callbackUrl } = JSON.parse(params);
+      window.localStorage.removeItem('query_params');
       window.location.href = callbackUrl;
     }
   }
