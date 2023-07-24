@@ -236,6 +236,9 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export default {
   data() {
     return {
@@ -274,8 +277,8 @@ export default {
   methods: {
     // create room
     createRoom() {
-      this.$axios
-        .post('/rooms', this.form)
+      axios
+        .post(`${apiUrl}/room`, this.form)
         .then((response) => {
           this.$message.success(`Room created successfully ${response}`);
           this.$emit('room-created');

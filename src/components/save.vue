@@ -118,6 +118,7 @@ const clear = () => {
 };
 
 async function saveJson() {
+  let workspace = 1; // TODO:: we need to recive this from querystring or something relative.
   const dataUrl = canvas.editor.getJson();
   const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
     JSON.stringify(dataUrl, null, '\t')
@@ -132,7 +133,7 @@ async function saveJson() {
     console.log({ apiUrl, params });
     await fetch(
       // apiUrl
-      'http://localhost:8000/api' + '/rooms/draw/save',
+      `${apiUrl}/workspace/${workspace}/floor`,
       {
         method: 'POST',
         headers: {
