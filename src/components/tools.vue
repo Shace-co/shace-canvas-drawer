@@ -166,6 +166,7 @@ const dragOption = {
   left: 0,
   top: 0,
 };
+const show_pricing_form_event = new Event('show-pricing-form');
 export default {
   name: 'ToolBar',
   inject: ['canvas', 'fabric'],
@@ -200,6 +201,10 @@ export default {
   },
   methods: {
     // 拖拽开始时就记录当前打算创建的元素类型
+    enableForm() {
+      show_pricing_form_event.data = { showForm: true };
+      window.dispatchEvent(show_pricing_form_event);
+    },
     onDragend(type) {
       // todo 拖拽优化 this.canvas.editor.dragAddItem(event, item);
       switch (type) {
@@ -236,6 +241,7 @@ export default {
         text.center();
       }
       this.canvas.c.setActiveObject(text);
+      this.enableForm();
     },
     addImg(e) {
       const imgEl = e.target.cloneNode(true);
@@ -276,6 +282,7 @@ export default {
         triangle.center();
       }
       this.canvas.c.setActiveObject(triangle);
+      this.enableForm();
     },
     addPolygon(option) {
       const polygon = new this.fabric.Polygon(getPolygonVertices(5, 200), {
@@ -308,14 +315,16 @@ export default {
         radius: 150,
         fill: '#57606B',
         id: uuid(),
-        name: '圆形',
+        name: 'Circle',
       });
       this.canvas.c.add(circle);
       if (!option) {
         circle.center();
       }
       this.canvas.c.setActiveObject(circle);
+      this.enableForm();
     },
+
     addRect(option) {
       const rect = new this.fabric.Rect({
         ...defaultPosition,
@@ -331,6 +340,7 @@ export default {
         rect.center();
       }
       this.canvas.c.setActiveObject(rect);
+      this.enableForm();
     },
     drawingLineModeSwitch(isArrow) {
       this.isArrow = isArrow;

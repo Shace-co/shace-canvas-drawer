@@ -10,14 +10,14 @@
 -->
 
 <template>
-  <div class="save-box">
-    <Button style="margin-left: 10px" type="text" @click="beforeClear">
+  <div>
+    <button style="margin-left: 10px" type="text" @click="beforeClear">
       {{ $t('clear') }}
-    </Button>
+    </button>
     <Button type="primary" @click="saveJson">
       {{ $t('keep') }}
     </Button>
-    <!-- <Dropdown style="margin-left: 10px" @on-click="saveWith">
+    <Dropdown style="" @on-click="saveWith">
       <Button type="primary">
         {{ $t('keep') }}
         <Icon type="ios-arrow-down"></Icon>
@@ -30,7 +30,7 @@
           <DropdownItem name="saveJson" divided>{{ $t('save_as_json') }}</DropdownItem>
         </DropdownMenu>
       </template>
-    </Dropdown> -->
+    </Dropdown>
   </div>
 </template>
 
@@ -52,56 +52,57 @@ const cbMap = {
     clipboardText(JSON.stringify(jsonStr, null, '\t'));
   },
 
-  // async saveJson() {
-  //   const dataUrl = canvas.editor.getJson();
-  //   const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-  //     JSON.stringify(dataUrl, null, '\t')
-  //   )}`;
-  //   downFile(fileStr, 'json');
-  // },
+  async saveJson() {
+    console.log(`JSON content: ${canvas.editor.getJson()}`);
+    const dataUrl = canvas.editor.getJson();
+    const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(dataUrl, null, '\t')
+    )}`;
+    downFile(fileStr, 'json');
+  },
 
   saveSvg() {
-    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    // const { left, top, width, height } = workspace;
-    // const dataUrl = canvas.c.toSVG({
-    //   width,
-    //   height,
-    //   viewBox: {
-    //     x: left,
-    //     y: top,
-    //     width,
-    //     height,
-    //   },
-    // });
-    // const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
-    // downFile(fileStr, 'svg');
-    // onCallback();
+    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    const { left, top, width, height } = workspace;
+    const dataUrl = canvas.c.toSVG({
+      width,
+      height,
+      viewBox: {
+        x: left,
+        y: top,
+        width,
+        height,
+      },
+    });
+    const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
+    downFile(fileStr, 'svg');
+    onCallback();
   },
 
   saveImg() {
-    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    // canvas.editor.ruler.hideGuideline();
-    // const { left, top, width, height } = workspace;
-    // const option = {
-    //   name: 'New Image',
-    //   format: 'png',
-    //   quality: 1,
-    //   left,
-    //   top,
-    //   width,
-    //   height,
-    // };
-    // canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
-    // const dataUrl = canvas.c.toDataURL(option);
-    // downFile(dataUrl, 'png');
-    // canvas.editor.ruler.showGuideline();
-    // onCallback();
+    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    canvas.editor.ruler.hideGuideline();
+    const { left, top, width, height } = workspace;
+    const option = {
+      name: 'New Image',
+      format: 'png',
+      quality: 1,
+      left,
+      top,
+      width,
+      height,
+    };
+    canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    const dataUrl = canvas.c.toDataURL(option);
+    downFile(dataUrl, 'png');
+    canvas.editor.ruler.showGuideline();
+    onCallback();
   },
 };
 
-// const saveWith = debounce(function (type) {
-//   cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
-// }, 300);
+const saveWith = debounce(function (type) {
+  cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
+}, 300);
 
 /**
  * @desc clear canvas 清空画布
@@ -118,10 +119,10 @@ const clear = () => {
 
 async function saveJson() {
   const dataUrl = canvas.editor.getJson();
-  // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-  //   JSON.stringify(dataUrl, null, '\t')
-  // )}`;
-  // downFile(fileStr, 'json');
+  const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+    JSON.stringify(dataUrl, null, '\t')
+  )}`;
+  downFile(fileStr, 'json');
   const params = typeof window !== 'undefined' ? window.localStorage.getItem('query_params') : null;
   if (params) {
     const { callbackUrl, floor_id } = JSON.parse(params);
@@ -148,6 +149,7 @@ async function saveJson() {
 }
 
 const beforeClear = () => {
+  // show an alert to workspace owner that the workspace rooms and content will be cleared
   Modal.confirm({
     title: t('tip'),
     content: `<p>${t('clearTip')}</p>`,
@@ -165,11 +167,11 @@ function onCallback(callbackUrl) {
 }
 
 function downFile(fileStr, fileType) {
-  // const anchorEl = document.createElement('a');
-  // anchorEl.href = fileStr;
-  // anchorEl.download = `${uuid()}.${fileType}`;
-  // document.body.appendChild(anchorEl); // required for firefox
-  // anchorEl.click();
-  // anchorEl.remove();
+  const anchorEl = document.createElement('a');
+  anchorEl.href = fileStr;
+  anchorEl.download = `${uuid()}.${fileType}`;
+  document.body.appendChild(anchorEl); // required for firefox
+  anchorEl.click();
+  anchorEl.remove();
 }
 </script>
