@@ -11,13 +11,13 @@
 
 <template>
   <div class="save-box">
-    <Button style="margin-left: 10px" type="text" @click="beforeClear">
+    <!-- <Button style="margin-left: 10px" type="text" @click="beforeClear">
       {{ $t('clear') }}
     </Button>
     <Button type="primary" @click="saveJson">
       {{ $t('keep') }}
-    </Button>
-    <!-- <Dropdown style="margin-left: 10px" @on-click="saveWith">
+    </Button> -->
+    <Dropdown style="margin-left: 10px" @on-click="saveWith">
       <Button type="primary">
         {{ $t('keep') }}
         <Icon type="ios-arrow-down"></Icon>
@@ -27,10 +27,12 @@
           <DropdownItem name="clipboard">{{ $t('copy_to_clipboard') }}</DropdownItem>
           <DropdownItem name="saveImg">{{ $t('save_as_picture') }}</DropdownItem>
           <DropdownItem name="saveSvg">{{ $t('save_as_svg') }}</DropdownItem>
-          <DropdownItem name="saveJson" divided>{{ $t('save_as_json') }}</DropdownItem>
+          <DropdownItem name="saveJson" @click="saveJson" divided>
+            {{ $t('save_as_json') }}
+          </DropdownItem>
         </DropdownMenu>
       </template>
-    </Dropdown> -->
+    </Dropdown>
   </div>
 </template>
 
@@ -43,7 +45,11 @@ import { debounce } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.APP_API_URL;
+const appUrl = import.meta.env.APP_URL;
+const urlParams = new URLSearchParams(window.location.search);
+const workspaceId = urlParams.get('workspace_id');
+const floorId = urlParams.get('floor_id');
 
 const { canvas } = useSelect();
 const cbMap = {
@@ -53,6 +59,7 @@ const cbMap = {
   },
 
   // async saveJson() {
+  //   console.log('exporting json');
   //   const dataUrl = canvas.editor.getJson();
   //   const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
   //     JSON.stringify(dataUrl, null, '\t')
@@ -61,47 +68,47 @@ const cbMap = {
   // },
 
   saveSvg() {
-    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    // const { left, top, width, height } = workspace;
-    // const dataUrl = canvas.c.toSVG({
-    //   width,
-    //   height,
-    //   viewBox: {
-    //     x: left,
-    //     y: top,
-    //     width,
-    //     height,
-    //   },
-    // });
-    // const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
-    // downFile(fileStr, 'svg');
-    // onCallback();
+    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    const { left, top, width, height } = workspace;
+    const dataUrl = canvas.c.toSVG({
+      width,
+      height,
+      viewBox: {
+        x: left,
+        y: top,
+        width,
+        height,
+      },
+    });
+    const fileStr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(dataUrl)}`;
+    downFile(fileStr, 'svg');
+    onCallback();
   },
 
   saveImg() {
-    // const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
-    // canvas.editor.ruler.hideGuideline();
-    // const { left, top, width, height } = workspace;
-    // const option = {
-    //   name: 'New Image',
-    //   format: 'png',
-    //   quality: 1,
-    //   left,
-    //   top,
-    //   width,
-    //   height,
-    // };
-    // canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
-    // const dataUrl = canvas.c.toDataURL(option);
-    // downFile(dataUrl, 'png');
-    // canvas.editor.ruler.showGuideline();
-    // onCallback();
+    const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
+    canvas.editor.ruler.hideGuideline();
+    const { left, top, width, height } = workspace;
+    const option = {
+      name: 'New Image',
+      format: 'png',
+      quality: 1,
+      left,
+      top,
+      width,
+      height,
+    };
+    canvas.c.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    const dataUrl = canvas.c.toDataURL(option);
+    downFile(dataUrl, 'png');
+    canvas.editor.ruler.showGuideline();
+    onCallback();
   },
 };
 
-// const saveWith = debounce(function (type) {
-//   cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
-// }, 300);
+const saveWith = debounce(function (type) {
+  cbMap[type] && typeof cbMap[type] === 'function' && cbMap[type]();
+}, 300);
 
 /**
  * @desc clear canvas 清空画布
@@ -117,34 +124,31 @@ const clear = () => {
 };
 
 async function saveJson() {
+  console.log('exporting json');
   const dataUrl = canvas.editor.getJson();
+  // old code if you want to download json file
   // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
   //   JSON.stringify(dataUrl, null, '\t')
   // )}`;
   // downFile(fileStr, 'json');
-  const params = typeof window !== 'undefined' ? window.localStorage.getItem('query_params') : null;
-  if (params) {
-    const { callbackUrl, floor_id } = JSON.parse(params);
-    if (!floor_id) {
-      return;
-    }
-    console.log({ apiUrl, params });
-    await fetch(
-      // apiUrl
-      'http://localhost:8000/api' + '/rooms/draw/save',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          floor_id,
-          floor_drawing: dataUrl,
-        }),
-      }
-    );
-    onCallback(callbackUrl);
+
+  if (!floorId) {
+    return;
   }
+  console.log(`hello from ${apiUrl} ${workspaceId} ${floorId}`);
+  await fetch(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      floorId,
+      floor_drawing: dataUrl,
+    }),
+  });
+
+  // Redirect to admin floor page after save
+  window.location.href = `${appUrl}/admin/floors/${floorId}`;
 }
 
 const beforeClear = () => {
