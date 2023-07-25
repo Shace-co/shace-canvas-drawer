@@ -124,31 +124,34 @@ const clear = () => {
 };
 
 async function saveJson() {
-  console.log('exporting json');
-  const dataUrl = canvas.editor.getJson();
-  // old code if you want to download json file
-  // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-  //   JSON.stringify(dataUrl, null, '\t')
-  // )}`;
-  // downFile(fileStr, 'json');
+  try {
+    const dataUrl = canvas.editor.getJson();
+    // old code if you want to download json file
+    // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+    //   JSON.stringify(dataUrl, null, '\t')
+    // )}`;
+    // downFile(fileStr, 'json');
 
-  if (!floorId) {
-    return;
+    if (!floorId) {
+      return;
+    }
+    console.log(`hello from ${apiUrl} ${workspaceId} ${floorId}`);
+    await fetch(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        floorId,
+        floor_drawing: dataUrl,
+      }),
+    });
+
+    // Redirect to admin floor page after save
+    window.location.href = `${appUrl}/admin/floors/${floorId}/edit`;
+  } catch (error) {
+    console.log('[ERR @ saveJson]:', error.message);
   }
-  console.log(`hello from ${apiUrl} ${workspaceId} ${floorId}`);
-  await fetch(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      floorId,
-      floor_drawing: dataUrl,
-    }),
-  });
-
-  // Redirect to admin floor page after save
-  window.location.href = `${appUrl}/admin/floors/${floorId}`;
 }
 
 const beforeClear = () => {
