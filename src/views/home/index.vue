@@ -228,31 +228,33 @@ export default {
   },
   async mounted() {
     try {
-      // Check if floor_content exists by making a GET request
-      const response = await axios.get(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`);
-      let floor_content = await response.data.data.floor_content;
-      if (floor_content) {
-        console.log('hello from data data floor_content', typeof floor_content);
+      if (workspaceId && floorId) {
+        // Check if floor_content exists by making a GET request
+        const response = await axios.get(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`);
+        let floor_content = await response.data.data.floor_content;
+        if (floor_content) {
+          console.log('hello from data data floor_content', typeof floor_content);
 
-        // Initialize Fabric.js canvas only if floor_content exists
-        this.canvas = new fabric.Canvas('canvas', {
-          fireRightClick: true,
-          stopContextMenu: true,
-          controlsAboveOverlay: true,
-        });
+          // Initialize Fabric.js canvas only if floor_content exists
+          this.canvas = new fabric.Canvas('canvas', {
+            fireRightClick: true,
+            stopContextMenu: true,
+            controlsAboveOverlay: true,
+          });
 
-        canvas.c = this.canvas;
-        event.init(canvas.c);
-        canvas.editor = new Editor(canvas.c);
-        this.canvas.loadFromJSON(floor_content, () => {
-          const workspace = this.canvas.getObjects().find((item) => item.id === 'workspace');
-          workspace.set('selectable', false);
-          workspace.set('hasControls', false);
-          this.canvas.renderAll();
-          this.canvas.requestRenderAll();
-          this.$Spin.hide();
-        });
-        this.show = true;
+          canvas.c = this.canvas;
+          event.init(canvas.c);
+          canvas.editor = new Editor(canvas.c);
+          this.canvas.loadFromJSON(floor_content, () => {
+            const workspace = this.canvas.getObjects().find((item) => item.id === 'workspace');
+            workspace.set('selectable', false);
+            workspace.set('hasControls', false);
+            this.canvas.renderAll();
+            this.canvas.requestRenderAll();
+            this.$Spin.hide();
+          });
+          this.show = true;
+        }
       } else {
         // If floor_content does not exist, create an empty canvas
         this.canvas = new fabric.Canvas('canvas', {
