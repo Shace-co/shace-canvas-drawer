@@ -36,6 +36,7 @@ module.exports = {
     'linebreak-style': 'off',
     'vue/multi-word-component-names': 'off', // 开启组件需要多单词
     'vuejs-accessibility/anchor-has-content': 'off',
+    'vue/no-setup-props-destructure': 'off',
   },
   overrides: [
     {
