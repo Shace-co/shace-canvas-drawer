@@ -10,14 +10,14 @@
 -->
 
 <template>
-  <div>
-    <button style="margin-left: 10px" type="text" @click="beforeClear">
+  <div class="save-box">
+    <!-- <Button style="margin-left: 10px" type="text" @click="beforeClear">
       {{ $t('clear') }}
     </button>
     <Button type="primary" @click="saveJson">
       {{ $t('keep') }}
-    </Button>
-    <Dropdown style="" @on-click="saveWith">
+    </Button> -->
+    <Dropdown style="margin-left: 10px" @on-click="saveWith">
       <Button type="primary">
         {{ $t('keep') }}
         <Icon type="ios-arrow-down"></Icon>
@@ -27,7 +27,9 @@
           <DropdownItem name="clipboard">{{ $t('copy_to_clipboard') }}</DropdownItem>
           <DropdownItem name="saveImg">{{ $t('save_as_picture') }}</DropdownItem>
           <DropdownItem name="saveSvg">{{ $t('save_as_svg') }}</DropdownItem>
-          <DropdownItem name="saveJson" divided>{{ $t('save_as_json') }}</DropdownItem>
+          <DropdownItem name="saveJson" @click="saveJson" divided>
+            {{ $t('save_as_json') }}
+          </DropdownItem>
         </DropdownMenu>
       </template>
     </Dropdown>
@@ -43,7 +45,11 @@ import { debounce } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.APP_API_URL;
+const appUrl = import.meta.env.APP_URL;
+const urlParams = new URLSearchParams(window.location.search);
+const workspaceId = urlParams.get('workspace_id');
+const floorId = urlParams.get('floor_id');
 
 const { canvas } = useSelect();
 const cbMap = {
@@ -52,14 +58,14 @@ const cbMap = {
     clipboardText(JSON.stringify(jsonStr, null, '\t'));
   },
 
-  async saveJson() {
-    console.log(`JSON content: ${canvas.editor.getJson()}`);
-    const dataUrl = canvas.editor.getJson();
-    const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(dataUrl, null, '\t')
-    )}`;
-    downFile(fileStr, 'json');
-  },
+  // async saveJson() {
+  //   console.log('exporting json');
+  //   const dataUrl = canvas.editor.getJson();
+  //   const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+  //     JSON.stringify(dataUrl, null, '\t')
+  //   )}`;
+  //   downFile(fileStr, 'json');
+  // },
 
   saveSvg() {
     const workspace = canvas.c.getObjects().find((item) => item.id === 'workspace');
@@ -118,34 +124,33 @@ const clear = () => {
 };
 
 async function saveJson() {
-  let workspace = 1; // TODO:: we need to recive this from querystring or something relative.
-  const dataUrl = canvas.editor.getJson();
-  const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-    JSON.stringify(dataUrl, null, '\t')
-  )}`;
-  downFile(fileStr, 'json');
-  const params = typeof window !== 'undefined' ? window.localStorage.getItem('query_params') : null;
-  if (params) {
-    const { callbackUrl, floor_id } = JSON.parse(params);
-    if (!floor_id) {
+  try {
+    const dataUrl = canvas.editor.getJson();
+    // old code if you want to download json file
+    // const fileStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+    //   JSON.stringify(dataUrl, null, '\t')
+    // )}`;
+    // downFile(fileStr, 'json');
+
+    if (!floorId) {
       return;
     }
-    console.log({ apiUrl, params });
-    await fetch(
-      // apiUrl
-      `${apiUrl}/workspace/${workspace}/floor`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          floor_id,
-          floor_drawing: dataUrl,
-        }),
-      }
-    );
-    onCallback(callbackUrl);
+    console.log(`hello from ${apiUrl} ${workspaceId} ${floorId}`);
+    await fetch(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        floorId,
+        floor_drawing: dataUrl,
+      }),
+    });
+
+    // Redirect to admin floor page after save
+    window.location.href = `${appUrl}/admin/floors/${floorId}/edit`;
+  } catch (error) {
+    console.log('[ERR @ saveJson]:', error.message);
   }
 }
 

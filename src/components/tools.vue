@@ -158,6 +158,8 @@
 import { v4 as uuid } from 'uuid';
 import initializeLineDrawing from '@/core/initializeLineDrawing';
 import { getPolygonVertices } from '@/utils/math';
+import axios from 'axios';
+import { Modal } from 'view-ui-plus';
 
 // 默认属性
 const defaultPosition = { shadow: '', fontFamily: 'arial' };
@@ -166,7 +168,11 @@ const dragOption = {
   left: 0,
   top: 0,
 };
-const show_pricing_form_event = new Event('show-pricing-form');
+const apiUrl = import.meta.env.APP_API_URL;
+// get querystring params
+const urlParams = new URLSearchParams(window.location.search);
+const workspaceId = urlParams.get('workspace_id');
+const floorId = urlParams.get('floor_id');
 export default {
   name: 'ToolBar',
   inject: ['canvas', 'fabric'],
@@ -200,10 +206,29 @@ export default {
     });
   },
   methods: {
+    async createRoom(info) {
+      console.log('createRoom');
+      try {
+        const response = await axios.post(
+          `${apiUrl}/workspaces/${info.workspace_id}/floor/${info.floor_id}/room`,
+          info
+        );
+        // show success message
+        Modal.success({
+          title: 'Success',
+          content: 'Room created successfully',
+        });
+        return response.data.data;
+      } catch (error) {
+        // Handle error
+        console.error('Error creating room:', error);
+        throw error; // Re-throw the error to handle it in the caller function if needed
+      }
+    },
     // 拖拽开始时就记录当前打算创建的元素类型
     enableForm() {
-      show_pricing_form_event.data = { showForm: true };
-      window.dispatchEvent(show_pricing_form_event);
+      // show_pricing_form_event.data = { showForm: true };
+      // window.dispatchEvent(show_pricing_form_event);
     },
     onDragend(type) {
       // todo 拖拽优化 this.canvas.editor.dragAddItem(event, item);
@@ -269,78 +294,137 @@ export default {
       this.canvas.c.setActiveObject(text);
     },
     addTriangle(option) {
-      const triangle = new this.fabric.Triangle({
-        ...defaultPosition,
-        width: 400,
-        height: 400,
-        fill: '#92706B',
-        id: uuid(),
-        name: '三角形',
-      });
-      this.canvas.c.add(triangle);
-      if (!option) {
-        triangle.center();
-      }
-      this.canvas.c.setActiveObject(triangle);
-      this.enableForm();
+      let info = {
+        name: 'Created Room',
+        floor_id: floorId,
+        workspace_id: workspaceId,
+        description: 'Description',
+      };
+
+      // Create a room using createRoom function
+      this.createRoom(info)
+        .then((created_room) => {
+          const triangle = new this.fabric.Triangle({
+            ...defaultPosition,
+            width: 400,
+            height: 400,
+            fill: '#92706B',
+            id: uuid(),
+            name: 'Triangle',
+            room_id: created_room.id,
+          });
+          this.canvas.c.add(triangle);
+          if (!option) {
+            triangle.center();
+          }
+          this.canvas.c.setActiveObject(triangle);
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error('Error adding triangle:', error);
+        });
     },
     addPolygon(option) {
-      const polygon = new this.fabric.Polygon(getPolygonVertices(5, 200), {
-        ...defaultPosition,
-        ...option,
-        fill: '#ccc',
-        id: uuid(),
-        name: '多边形',
-      });
-      polygon.set({
-        // 创建完设置宽高，不然宽高会变成自动的值
-        width: 400,
-        height: 400,
-        // 关闭偏移
-        pathOffset: {
-          x: 0,
-          y: 0,
-        },
-      });
-      this.canvas.c.add(polygon);
-      if (!option) {
-        polygon.center();
-      }
-      this.canvas.c.setActiveObject(polygon);
+      let info = {
+        name: 'Created Room',
+        floor_id: floorId,
+        workspace_id: workspaceId,
+        description: 'Description',
+      };
+
+      // Create a room using createRoom function
+      this.createRoom(info)
+        .then((created_room) => {
+          const polygon = new this.fabric.Polygon(getPolygonVertices(5, 200), {
+            ...defaultPosition,
+            ...option,
+            fill: '#ccc',
+            id: uuid(),
+            name: '多边形',
+            room_id: created_room.id,
+          });
+          polygon.set({
+            width: 400,
+            height: 400,
+            pathOffset: {
+              x: 0,
+              y: 0,
+            },
+          });
+          this.canvas.c.add(polygon);
+          if (!option) {
+            polygon.center();
+          }
+          this.canvas.c.setActiveObject(polygon);
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error('Error adding polygon:', error);
+        });
     },
-    addCircle(option) {
-      const circle = new this.fabric.Circle({
-        ...defaultPosition,
-        ...option,
-        radius: 150,
-        fill: '#57606B',
-        id: uuid(),
-        name: 'Circle',
-      });
-      this.canvas.c.add(circle);
-      if (!option) {
-        circle.center();
+    async addCircle(option) {
+      let info = {
+        name: 'Created Room',
+        floor_id: floorId,
+        workspace_id: workspaceId,
+        description: 'Description',
+      };
+      // create a room using createRoom function
+      try {
+        let created_room = await this.createRoom(info);
+        // inject room_id inside the circle object
+        const circle = new this.fabric.Circle({
+          ...defaultPosition,
+          ...option,
+          radius: 150,
+          fill: '#57606B',
+          id: uuid(),
+          name: 'Grey Circle',
+        });
+        circle.set('room_id', created_room.id);
+        await this.canvas.c.add(circle);
+        if (!option) {
+          await circle.center();
+        }
+        await this.canvas.c.setActiveObject(circle);
+      } catch (error) {
+        // Handle error if needed
+        console.error('Error adding circle:', error);
+        return error;
       }
-      this.canvas.c.setActiveObject(circle);
-      this.enableForm();
     },
 
     addRect(option) {
-      const rect = new this.fabric.Rect({
-        ...defaultPosition,
-        ...option,
-        fill: '#F57274',
-        width: 400,
-        height: 400,
-        id: uuid(),
-        name: '矩形',
-      });
-      this.canvas.c.add(rect);
-      if (!option) {
-        rect.center();
-      }
-      this.canvas.c.setActiveObject(rect);
-      this.enableForm();
+      let info = {
+        name: 'Created Room',
+        floor_id: floorId,
+        workspace_id: workspaceId,
+        description: 'Description',
+      };
+
+      // Create a room using createRoom function
+      this.createRoom(info)
+        .then((created_room) => {
+          const rect = new this.fabric.Rect({
+            ...defaultPosition,
+            ...option,
+            fill: '#F57274',
+            width: 400,
+            height: 400,
+            id: uuid(),
+            name: 'Rectangle',
+            room_id: created_room.id,
+          });
+          this.canvas.c.add(rect);
+          if (!option) {
+            rect.center();
+          }
+          this.canvas.c.setActiveObject(rect);
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error('Error adding rectangle:', error);
+        });
     },
     drawingLineModeSwitch(isArrow) {
       this.isArrow = isArrow;

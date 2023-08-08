@@ -155,9 +155,18 @@ import { downFile } from '@/utils/utils';
 import { fabric } from 'fabric';
 import Editor from '@/core';
 import shaceLogo from '@/assets/images/shace_logo.png';
+import axios from 'axios';
+import { selectFiles, downFontByJSON } from '@/utils/utils';
 
 const event = new CanvasEventEmitter();
 const canvas = {};
+// check if has query params "workspace_id" and "floor_id"
+const urlParams = new URLSearchParams(window.location.search);
+const workspaceId = urlParams.get('workspace_id');
+const floorId = urlParams.get('floor_id');
+
+const apiUrl = import.meta.env.APP_API_URL;
+
 export default {
   name: 'HomeView',
   provide: {
@@ -219,35 +228,55 @@ export default {
       },
     },
   },
-  mounted() {
-    this.canvas = new fabric.Canvas('canvas', {
-      fireRightClick: true, // 启用右键，button的数字为3
-      stopContextMenu: true, // 禁止默认右键菜单
-      controlsAboveOverlay: true, // 超出clipPath后仍然展示控制条
-    });
-
-    canvas.c = this.canvas;
-    event.init(canvas.c);
-    canvas.editor = new Editor(canvas.c);
-
-    canvas.c.renderAll();
-
-    this.show = true;
-    this.$Spin.hide();
-
+  async mounted() {
     try {
-      if (typeof window !== 'undefined') {
-        const route = useRoute();
-        if (route?.query && Object.keys(route.query).length > 0) {
-          window.localStorage.setItem('query_params', JSON.stringify(route.query));
-        } else {
-          window.localStorage.removeItem('query_params');
+      if (workspaceId && floorId) {
+        // Check if floor_content exists by making a GET request
+        const response = await axios.get(`${apiUrl}/workspaces/${workspaceId}/floor/${floorId}`);
+        let floor_content = await response.data.data.floor_content;
+        if (floor_content) {
+          console.log('hello from data data floor_content', typeof floor_content);
+
+          // Initialize Fabric.js canvas only if floor_content exists
+          this.canvas = new fabric.Canvas('canvas', {
+            fireRightClick: true,
+            stopContextMenu: true,
+            controlsAboveOverlay: true,
+          });
+
+          canvas.c = this.canvas;
+          event.init(canvas.c);
+          canvas.editor = new Editor(canvas.c);
+          this.canvas.loadFromJSON(floor_content, () => {
+            const workspace = this.canvas.getObjects().find((item) => item.id === 'workspace');
+            workspace.set('selectable', false);
+            workspace.set('hasControls', false);
+            this.canvas.renderAll();
+            this.canvas.requestRenderAll();
+            this.$Spin.hide();
+          });
+          this.show = true;
         }
+      } else {
+        // If floor_content does not exist, create an empty canvas
+        this.canvas = new fabric.Canvas('canvas', {
+          fireRightClick: true,
+          stopContextMenu: true,
+          controlsAboveOverlay: true,
+        });
+        canvas.c = this.canvas;
+        event.init(canvas.c);
+        canvas.editor = new Editor(canvas.c);
+        this.canvas.renderAll();
+        this.show = true;
+        this.$Spin.hide();
       }
     } catch (error) {
-      console.log(error);
+      // Handle error if the GET request fails
+      console.error('Error fetching floor_content:', error);
     }
   },
+
   methods: {
     // 获取字体数据 新增字体样式使用
     getFontJson() {
