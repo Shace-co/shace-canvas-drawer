@@ -227,8 +227,8 @@ export default {
     },
     // 拖拽开始时就记录当前打算创建的元素类型
     enableForm() {
-      show_pricing_form_event.data = { showForm: true };
-      window.dispatchEvent(show_pricing_form_event);
+      // show_pricing_form_event.data = { showForm: true };
+      // window.dispatchEvent(show_pricing_form_event);
     },
     onDragend(type) {
       // todo 拖拽优化 this.canvas.editor.dragAddItem(event, item);
