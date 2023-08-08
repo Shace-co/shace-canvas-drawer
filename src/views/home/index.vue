@@ -9,7 +9,7 @@
           </a>
         </span>
 
-        <import-JSON></import-JSON>
+        <import-floor></import-floor>
         <Divider type="vertical" />
         <import-file></import-file>
         <Divider type="vertical" />
@@ -27,6 +27,7 @@
         </div>
       </Header>
       <Content style="display: flex; height: calc(100vh - 64px)">
+        <pricingForm></pricingForm>
         <div v-if="show" style="width: 380px; height: 100%; background: #fff; display: flex">
           <Menu
             :active-name="menuActive"
@@ -113,9 +114,9 @@
 import { useRoute } from 'vue-router';
 
 // 导入元素
-import importJSON from '@/components/importJSON.vue';
+import importFloor from '@/components/importFloor.vue';
 import importFile from '@/components/importFile.vue';
-//import fontTmpl from '@/components/fontTmpl.vue';
+import pricingForm from '@/components/pricingForm.vue';
 
 // 顶部组件
 import align from '@/components/align.vue';
@@ -180,7 +181,7 @@ export default {
       select: null,
       ruler: false,
       shaceLogo: shaceLogo,
-      bookable: false,
+      bookable: true,
     };
   },
   components: {
@@ -197,7 +198,7 @@ export default {
     previewCurrent,
     save,
     lang,
-    importJSON,
+    importFloor,
     clone,
     flip,
     //importTmpl,
@@ -210,6 +211,7 @@ export default {
     //fontTmpl,
     replaceImg,
     filters,
+    pricingForm,
   },
   created() {
     // this.$Spin.show();

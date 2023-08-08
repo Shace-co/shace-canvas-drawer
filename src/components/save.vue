@@ -13,7 +13,7 @@
   <div class="save-box">
     <!-- <Button style="margin-left: 10px" type="text" @click="beforeClear">
       {{ $t('clear') }}
-    </Button>
+    </button>
     <Button type="primary" @click="saveJson">
       {{ $t('keep') }}
     </Button> -->
@@ -155,6 +155,7 @@ async function saveJson() {
 }
 
 const beforeClear = () => {
+  // show an alert to workspace owner that the workspace rooms and content will be cleared
   Modal.confirm({
     title: t('tip'),
     content: `<p>${t('clearTip')}</p>`,
@@ -172,11 +173,11 @@ function onCallback(callbackUrl) {
 }
 
 function downFile(fileStr, fileType) {
-  // const anchorEl = document.createElement('a');
-  // anchorEl.href = fileStr;
-  // anchorEl.download = `${uuid()}.${fileType}`;
-  // document.body.appendChild(anchorEl); // required for firefox
-  // anchorEl.click();
-  // anchorEl.remove();
+  const anchorEl = document.createElement('a');
+  anchorEl.href = fileStr;
+  anchorEl.download = `${uuid()}.${fileType}`;
+  document.body.appendChild(anchorEl); // required for firefox
+  anchorEl.click();
+  anchorEl.remove();
 }
 </script>
